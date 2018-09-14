@@ -1,0 +1,17 @@
+Package: tMSE
+Title: Tools for conducting Management Strategy Evaluation 
+Version: 0.0.0.9000
+Authors@R: person("Laurence Kell", email="lauriekell@seaplusplus.co.uk", role=c("aut","cre"))
+Description: Tools for conducting Management Strategy Evaluation for data
+    limited stocks.
+Depends:
+    R (>= 3.4.1),
+    FLCore (>= 2.6.7)
+Imports:
+    FLCore
+License: GPL (>= 2)
+Suggests:
+    devtools
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
