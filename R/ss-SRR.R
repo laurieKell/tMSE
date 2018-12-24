@@ -30,3 +30,11 @@ ssSRR<-function(obj){
            params=params)
   
   res}
+
+if (FALSE){
+  base="/home/laurence/Desktop/sea++/swonmse/github/inputs/2017/base"
+  myreplist <- SS_output(dir=base)
+  
+  qnorm(0.025,myreplist$parameters["SR_BH_steep","Value"],myreplist$parameters["SR_BH_steep","Parm_StDev"])
+  qnorm(0.975,myreplist$parameters["SR_BH_steep","Value"],myreplist$parameters["SR_BH_steep","Parm_StDev"])
+  }
