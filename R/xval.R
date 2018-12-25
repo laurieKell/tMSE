@@ -99,28 +99,43 @@ runHcst<-function(x,n=6){
   key=ddply(fls$u,.(fleet), transform, maxyr=max(year))
   key=subset(key,year>=(maxyr-n)&year<maxyr)[,-7]
   
-  dir.create(file.path(dir, "hcast"))
+  dir=dirname(x)
+  dir.create(dirX)
   
   hRsd=foreach(i=seq(dim(key)[1]),
-      .multicombine=TRUE,
-      .combine     =rbind.fill,
-      .packages    ="tMSE") %dopar%{
-              
-      iRw=subset(fls$u,fleet==key[i,"fleet"]&year>key[i,"year"])[,"row"]
-      res=tMSE:::jkU(iRw,fls$u,fls$dfl,x)
-      rtn=cbind(tail =key[i,"year"],
-                naive=fls$u[as.numeric(dimnames(subset(fls$u,fleet==key[i,"fleet"]&year==key[i,"year"]))[[1]]),"obs"],
-                subset(res$u,Fleet==key[i,"fleet"]&Yr>key[i,"year"]))[,1:13]
-      
-      write.table(res[[1]],file=file.path(dir, "hcast",paste("-prd",i,".csv",sep="")))
-      write.table(res[[2]],file=file.path(dir, "hcast",paste("-ref",i,".csv",sep="")))
-      write.table(res[[3]],file=file.path(dir, "hcast",paste("-ts" ,i,".csv",sep="")))
-      
-      names(rtn)[3:13]=c("fleet","name","year","season","year.","vuln","obs","hat","q","eff","se")
-                 
-      rtn}
+       .multicombine=TRUE,
+       .combine     =rbind.fill,
+       .packages    ="tMSE") %dopar%{
+
+       iRw=subset(fls$u,fleet==key[i,"fleet"]&year>key[i,"year"])[,"row"]
+       res=tMSE:::jkU(iRw,fls$u,fls$dfl,x)
+       rtn=cbind(tail =key[i,"year"],
+                 naive=fls$u[as.numeric(dimnames(subset(fls$u,fleet==key[i,"fleet"]&year==key[i,"year"]))[[1]]),"obs"],
+                 subset(res$u,Fleet==key[i,"fleet"]&Yr>key[i,"year"]))[,1:13]
+
+       write.table(res[[1]],file=file.path(dir, "hcast",paste("rsd",i,".csv",sep="")))
+       write.table(res[[2]],file=file.path(dir, "hcast",paste("ref",i,".csv",sep="")))
+       write.table(res[[3]],file=file.path(dir, "hcast",paste("ts" ,i,".csv",sep="")))
+
+       names(rtn)[3:13]=c("fleet","name","year","season","year.","vuln","obs","hat","q","eff","se")
+
+       rtn}
+ 
+  rsdl=mdply(data.frame(i=seq(dim(key)[1])),function(i)
+    read.csv(file.path(dir,"hcast",paste("prd",i,".csv",sep="")),header=T,sep=" "))
+  names(rsdl)=c("fleet","name","year","season","year.","vulnerable","obs","hat","q","q.","se",
+                "dev","like","like.","sp","use")
   
-  hRsd}
+  ts  =mdply(data.frame(i=seq(dim(key)[1])),function(i) 
+    read.csv(file.path(dir,"hcast",paste("ts",i,".csv",sep="")),header=T,sep=" "))
+  names(ts)=c("i","area","year","era","season","biomass","biomass.","ssb")
+  
+  rf  =mdply(data.frame(i=seq(dim(key)[1])),function(i)   
+    read.csv(file.path(dir,"hcast",paste("ref",i,".csv",sep="")),header=T,sep=" "))
+  rf=rf[,1:3]
+  names(rf)=c("i","variable","value")
+  
+  return(list(hindcast=hRsd,residuals=rsdl,timeseries=ts,refpts=rf,key=key))}
 
 runJK<-function(x){ 
   
@@ -130,28 +145,47 @@ runJK<-function(x){
   dir   =dirname(x)
   dat   =substr(x,nchar(dir)+2,nchar(x))
   
-  dir.create(file.path(dir, "xval"))
+  dirX=file.path(dir, "xval")
+  dir.create(dirX)
   
-  pRsd=foreach(i=fls$u$row,
-      .multicombine=TRUE,
-      .combine     =rbind,
-      .packages    ="r4ss") %dopar%{
-                 
-      ## copy files from target 
-      dirTmp=tMSE:::mkTmp()
-      setwd(dirTmp)
-                 
-      system(paste("cp",file.path(dir,"*.*"),dirTmp))
-      res=tMSE:::jkU(i,fls$u,fls$dfl,file.path(dirTmp,dat))
-                 
-      write.table(res[[1]],file=file.path(dir, "xval",paste("-prd",i,".csv",sep="")))
-      write.table(res[[2]],file=file.path(dir, "xval",paste("-ref",i,".csv",sep="")))
-      write.table(res[[3]],file=file.path(dir, "xval",paste("-ts" ,i,".csv",sep="")))
-                 
-      #clean up  
-      setwd(dirNow)
-      system(paste("rm -R",dirTmp))
-                 
-      subset(fls$u,row==i)}
+  pRsd=NULL
+  pRsd=foreach(i=seq(length(fls$u$row)),
+     .multicombine=TRUE,
+     .combine     =rbind,
+     .packages    ="r4ss") %dopar%{
+                
+     ## copy files from target 
+     dirTmp=tMSE:::mkTmp()
+     setwd(dirTmp)
+                
+     system(paste("cp",file.path(dir,"*.*"),dirTmp))
+     iRw=fls$u[i,"row"]
+     res=tMSE:::jkU(iRw,fls$u,fls$dfl,file.path(dirTmp,dat))
+                
+     write.table(res[[1]],file=file.path(dir, "xval",paste("prd",i,".csv",sep="")))
+     write.table(res[[2]],file=file.path(dir, "xval",paste("ref",i,".csv",sep="")))
+     write.table(res[[3]],file=file.path(dir, "xval",paste("ts" ,i,".csv",sep="")))
+                
+     #clean up  
+     setwd(dirNow)
+     system(paste("rm -R",dirTmp))
+                
+     res[[1]][i,]}
   
-  pRsd}
+  pRsd=pRsd[,1:11]
+  names(pRsd)=c("fleet","name","year","season","year.","vulnerable","obs","hat","q","q.","se")
+  
+  #rsdl=mdply(data.frame(i=seq(length(fls$u$row))),function(i)
+  #  read.csv(file.path(dirX,paste("prd",i,".csv",sep="")),header=T,sep=" ")[i,])
+
+  ts  =mdply(data.frame(i=seq(length(fls$u$row))),function(i) 
+    read.csv(file.path(dirX,paste("ts",i,".csv",sep="")),header=T,sep=" "))
+  names(ts)=c("i","area","year","era","season","biomass","biomass.","ssb")
+  
+  rf  =mdply(data.frame(i=seq(length(fls$u$row))),function(i)   
+    read.csv(file.path(dirX,paste("ref",i,".csv",sep="")),header=T,sep=" "))
+  rf=rf[,1:3]
+  names(rf)=c("i","variable","value")
+  
+  return(list(prediction=pRsd,timeseries=ts,refpts=rf))}
+

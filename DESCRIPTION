@@ -6,9 +6,10 @@ Description: Tools for conducting Management Strategy Evaluation for data
     limited stocks.
 Depends:
     R (>= 3.4.1),
-    FLCore (>= 2.6.7)
+    FLCore (>= 2.6.7),
+    FLBRP,
+    mpb
 Imports:
-    FLCore
 License: GPL (>= 2)
 Suggests:
     devtools

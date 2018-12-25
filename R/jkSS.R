@@ -1,17 +1,17 @@
-library(r4ss)
-library(stringr)
-library(plyr)
-library(doParallel)
-library(foreach)
-library(tMSE)
-
 if (FALSE){
+  library(r4ss)
+  library(stringr)
+  library(plyr)
+  library(doParallel)
+  library(foreach)
+  library(tMSE)
+  
   cl = makeCluster(3)
   registerDoParallel(cl)
   
   x="/home/laurence/Desktop/sea++/swonmse/inputs/2017/jk/_SWO_DATA.dat"
   
-  runJK(x)
+  jk=tMSE:::runJK(x)
   }
 
 if (FALSE){
