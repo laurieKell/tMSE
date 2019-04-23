@@ -1,3 +1,4 @@
+if (FALSE){
 sink("cpueAVG.jags")
 cat("
     model {
@@ -101,4 +102,5 @@ cat("
 } 
     ",fill = TRUE)
 sink()
+}
 
