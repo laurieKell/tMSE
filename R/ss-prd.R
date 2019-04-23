@@ -18,6 +18,7 @@ getTs<-function(x) {
   ts}
 
 getRf<-function(x){
+  names(x$derived_quants)=tolower(names(x$derived_quants))
   rf=subset(x$derived_quants,
             label%in%c("SSB_Unfished","SSB_MSY","Fstd_MSY","TotYield_MSY"))[,1:5]
   rf[,1]=rfs[rf[,1]]
