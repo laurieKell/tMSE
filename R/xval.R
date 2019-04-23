@@ -119,7 +119,7 @@ jkU<-function(i,u,tfl,dat,newVer=FALSE){
         "TotYield_SPRtgt", "SSB_MSY",         "SPR_MSY",          "Fstd_MSY",       "TotYield_MSY",    
         "RetYield_MSY") 
   
-  names(ssf$derived_quants)=tolower(names(ssf$derived_quants)
+  names(ssf$derived_quants)=tolower(names(ssf$derived_quants))
   rf=subset(ssf$derived_quants,label%in%rfs)
   ts=ssf$timeseries[,1:8]
   
