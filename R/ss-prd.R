@@ -10,8 +10,12 @@ names(rfs)=
 
 getTs<-function(x) {
   ts=merge(x$timeseries[,c(1:5,7:8)],ddply(x$catch,.(Yr), with,sum(Obs)))
-  names(ts)=c("year","area","era","season","biomass","ssb","rec","catch")
-  ts[,-3]}
+  if (length(names(ts))==8)
+    names(ts)=c("year","area","era","season","biomass","ssb","rec","catch")
+  else
+    names(ts)=c("year","era","season","biomass","ssb","rec","catch")
+  
+  ts}
 
 getRf<-function(x){
   rf=subset(x$derived_quants,
