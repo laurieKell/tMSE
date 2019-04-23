@@ -41,6 +41,11 @@ ggplot(ddply(subset(ss$cpue,Fleet_name!="SPN_1"),.(Fleet_name), subset, Yr>max(Y
   theme_bw()+
   xlab("Year")+ylab("CPUE")+
   theme(axis.text.x=element_text(angle=-90),legend.position="none")
-  
   }
 
+
+if (FALSE){
+  x="/home/laurence/Desktop/Dropbox/baltic-ss/xval/EBcod_base_dat.ss"
+
+  codh=tMSE:::runHcstYr(x,new=TRUE)
+  }
