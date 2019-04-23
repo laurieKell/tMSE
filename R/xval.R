@@ -174,10 +174,7 @@ runHcst<-function(x,n=10,newVer=FALSE){
   ts  =mdply(data.frame(i=seq(dim(key)[1])),function(i) 
     read.csv(file.path(dir,"hcast",paste("ts",i,".csv",sep="")),header=T,sep=" "))
   
-  if (length(names(ts))==8)
-    names(ts)=c("key","area","year","era","season","biomass","biomass.","ssb","rec")
-  else
-    names(ts)=c("key","year","era","season","biomass","biomass.","ssb","rec")
+  names(ts)=c("key","area","year","era","season","biomass","biomass.","ssb","rec")
   
   rf  =mdply(data.frame(i=seq(dim(key)[1])),function(i)   
     read.csv(file.path(dir,"hcast",paste("ref",i,".csv",sep="")),header=T,sep=" "))
