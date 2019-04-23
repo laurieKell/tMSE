@@ -1,4 +1,4 @@
-if (FALSE}){
+if (FALSE){
 library("dtw")
 data("aami3a")
 ref <-ts(subset(dgs,factor=="base"&level=="wg"&name=="Age-4")$obs)
