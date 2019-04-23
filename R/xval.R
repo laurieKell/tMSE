@@ -147,7 +147,7 @@ runHcst<-function(x,n=10,newVer=FALSE){
        .packages    =c("tMSE","r4ss")) %dopar%{
 
        iRw=subset(fls$u,fleet==key[i,"fleet"]&year>key[i,"year"])[,"row"]
-       res=jkU(iRw,fls$u,fls$dfl,x,newVer)
+       res=tMSE:::jkU(iRw,fls$u,fls$dfl,x,newVer)
        rtn=cbind(tail =key[i,"year"],
                  naive=fls$u[as.numeric(dimnames(subset(fls$u,fleet==key[i,"fleet"]&year==key[i,"year"]))[[1]]),"obs"],
                  subset(res$u,Fleet==key[i,"fleet"]&Yr>=key[i,"year"]))[,1:13]
@@ -206,7 +206,7 @@ runHcstYr<-function(x,n=5,newVer=FALSE){
   #for(i in yrs[seq(n)]){
   
      iRw=subset(fls$u,year>=i)[,"row"]
-     res=jkU(iRw,fls$u,fls$dfl,x,newVer)
+     res=tMSE:::jkU(iRw,fls$u,fls$dfl,x,newVer)
     
      ##bug
      #ggplot(subset(h1[[1]],year==tail+1))+
@@ -340,7 +340,7 @@ runJKBlock<-function(x,n=5){
                  
                 system(paste("cp",file.path(dir,"*.*"),dirTmp))
                 iRw=subset(fls$u,fleet==key[i,"fleet"]&year>key[i,"min"]&year<=key[i,"max"])[,"row"]
-                res=jkU(iRw,fls$u,fls$dfl,file.path(dirTmp,dat))
+                res=tMSE:::jkU(iRw,fls$u,fls$dfl,file.path(dirTmp,dat))
                  
                 write.table(res[[1]],file=file.path(dir, "xvalBlock",paste("prd",i,".csv",sep="")))
                 write.table(res[[2]],file=file.path(dir, "xvalBlock",paste("ref",i,".csv",sep="")))
