@@ -118,7 +118,9 @@ jkU<-function(i,u,tfl,dat,newVer=FALSE){
         "SPR_Btgt",        "Fstd_Btgt",       "TotYield_Btgt",    "SSB_SPRtgt",     "Fstd_SPRtgt",     
         "TotYield_SPRtgt", "SSB_MSY",         "SPR_MSY",          "Fstd_MSY",       "TotYield_MSY",    
         "RetYield_MSY") 
-  rf=subset(ssf$derived_quants,Label%in%rfs)
+  
+  names(ssf$derived_quants)=tolower(names(ssf$derived_quants)
+  rf=subset(ssf$derived_quants,label%in%rfs)
   ts=ssf$timeseries[,1:8]
   
   #clean up  
