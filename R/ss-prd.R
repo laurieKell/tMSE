@@ -19,7 +19,7 @@ getTs<-function(x) {
 
 getRf<-function(x){
   rf=subset(x$derived_quants,
-            Label%in%c("SSB_Unfished","SSB_MSY","Fstd_MSY","TotYield_MSY"))[,1:5]
+            label%in%c("SSB_Unfished","SSB_MSY","Fstd_MSY","TotYield_MSY"))[,1:5]
   rf[,1]=rfs[rf[,1]]
   dimnames(rf)[[1]]=rf[,1]
   
@@ -41,7 +41,8 @@ smrySS<-function(x,covar=TRUE,forecast=TRUE){
   return(list(timeseries=ts,refpts=rf,pfunc=transform(pf,m=1+p)))}
 
 getRefpts<-function(object,value=TRUE){
-  rf=subset(object$derived_quants,Label%in%rfs[c(1,12,15)])[,2:3]
+  names(object$derived_quants)=tolower(names(object$derived_quants))
+  rf=subset(object$derived_quants,label%in%rfs[c(1,12,15)])[,2:3]
   names(rf)=c("value","var")
   dimnames(rf)[[1]]=c("k","bmsy","msy")
   rf=t(as.matrix(rf))
@@ -57,7 +58,8 @@ getPellaT<-function(object){
         "SPR_MSY",         "Fstd_MSY",         "TotYield_MSY",     "RetYield_MSY",
         "SSB_unfished","Dead_Catch_MSY") 
   
-  rf=subset(object$derived_quants,Label%in%rfs[c(1,17,12,15,18)])[,2:3]
+  names(object$derived_quants)=tolower(names(object$derived_quants))
+  rf=subset(object$derived_quants,label%in%rfs[c(1,17,12,15,18)])[,2:3]
   names(rf)=c("value","var")
   dimnames(rf)[[1]]=c("k","bmsy","msy")
   rf=t(as.matrix(rf))
